@@ -1,12 +1,13 @@
 package com.agmr.navdrawer;
 
 public class User {
-    String name, phone_number, address, email_address;
+    String uid, name, phone_number, address, email_address;
     float balance;
 
     public User() {
 
     }
+
 
     public User(String mName, String mPhone_number, String mAddress, String email_address, float mBalance) {
         this.name = mName;
@@ -14,6 +15,14 @@ public class User {
         this.address = mAddress;
         this.email_address = email_address;
         this.balance = mBalance;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getEmail_address() {

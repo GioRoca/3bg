@@ -3,6 +3,7 @@ package com.agmr.navdrawer;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,27 +14,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Signup extends AppCompatActivity {
 
-    private EditText editTextEmail;
-    private EditText editTextPassword;
+    private EditText editTextEmail, editTextPassword, edFname, edLname, editTextContact, editTextAddress;
     private Button buttonSignup;
     private ProgressDialog progressDialog;
     private TextView textViewSignin;
     private FirebaseAuth firebaseAuth;
-    private String email, password;
+    private String email, password, userId;
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-
+        database = FirebaseDatabase.getInstance();
         // Initializing View Objects
+        edFname = (EditText) findViewById(R.id.editTextFirstName);
+        edLname = (EditText) findViewById(R.id.editTextLastName);
+        editTextContact = (EditText) findViewById(R.id.editTextPhone);
+        editTextAddress = (EditText) findViewById(R.id.editTextAddress);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
 
@@ -103,8 +113,27 @@ public class Signup extends AppCompatActivity {
                     firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            Toast.makeText(Signup.this, "Registration Success. Add to profile", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(getApplicationContext(), Add_profile.class));
+
+
+                            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                            userId = currentUser.getUid();
+                            float freecoins = 10000;
+                            dbRef = database.getReference("Users");
+                            String name = edFname.getText().toString() + " " + edLname.getText().toString();
+                            User user = new User(name, editTextContact.getText().toString(), editTextAddress.getText().toString().trim(),
+                                    editTextEmail.getText().toString(), freecoins);
+                            dbRef.child(userId).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Snackbar snackbar = Snackbar
+                                            .make(findViewById(R.id.RL), "Successfully Registered", Snackbar.LENGTH_LONG);
+                                    progressDialog.dismiss();
+                                    snackbar.show();
+                                    startActivity(new Intent(getApplicationContext(), Profile.class));
+                                }
+                            });
+
+
                         }
                     });
                 } else {
