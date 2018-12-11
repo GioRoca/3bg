@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -42,4 +45,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:11.0.4'
     implementation 'com.google.firebase:firebase-core:11.0.4'
 
+    implementation 'android.arch.persistence.room:runtime:1.0.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
+
+
+
+    /*
+    implementation 'android.arch.lifecycle:runtime:1.0.0-alpha1'
+    implementation 'android.arch.lifecycle:extensions:1.0.0-alpha1'
+    annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha1"
+*/
 }
