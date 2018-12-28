@@ -115,6 +115,7 @@ public class EyeglassAdapter extends RecyclerView.Adapter<EyeglassAdapter.Eyegla
         for (CartItem temp : cI) {
             if (temp.getModel().equals(model)) {
                 temp.setQuantity(temp.getQuantity() + 1);
+                temp.setSubtotal(temp.getQuantity()*temp.getPrice());
                 cR.updateCartItem(temp);
                 Toast.makeText(mContext, "Item Existed on your cart.", Toast.LENGTH_SHORT).show();
                 return true;
@@ -124,7 +125,7 @@ public class EyeglassAdapter extends RecyclerView.Adapter<EyeglassAdapter.Eyegla
     }
 
     private boolean addToCart(String model, String key, String uid, String imageUrl, float price, int quantity) {
-        cR.insertCartItem(model, key, uid, imageUrl, price, quantity);
+        cR.insertCartItem(model, key, uid, imageUrl, price, quantity, price*quantity);
         return true;
     }
 

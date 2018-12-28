@@ -14,7 +14,7 @@ public class CartItem implements Serializable {
     private String key;
     private String uid;
     private String imageUrl;
-    private float price;
+    private float price, subtotal;
     private int quantity;
 
     //Empty constructor
@@ -22,13 +22,14 @@ public class CartItem implements Serializable {
 
     }
 
-    public CartItem(String model, String key, String uid, String imageUrl, float price, int quantity) {
+    public CartItem(String model, String key, String uid, String imageUrl, float price, int quantity, float subtotal) {
         this.model = model;
         this.key = key;
         this.imageUrl = imageUrl;
         this.uid = uid;
         this.price = price;
         this.quantity = quantity;
+        this.subtotal=  subtotal;
     }
 
     public int getId() {
@@ -87,5 +88,11 @@ public class CartItem implements Serializable {
         this.quantity = quantity;
     }
 
+    public float getSubtotal() {
+        return subtotal;
+    }
 
+    public void setSubtotal(float subtotal) {
+        this.subtotal = subtotal;
+    }
 }

@@ -52,7 +52,7 @@
                 android:layout_weight="1"
                 android:hint="Price"
                 android:textStyle="bold|italic"
-                app:symbol="$" />
+                app:symbol="₱" />
 
             <Button
                 android:id="@+id/btn_add"

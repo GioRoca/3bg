@@ -55,7 +55,7 @@
                 android:text="Total:"
                 android:textSize="14sp" />
 
-            <TextView
+            <org.fabiomsr.moneytextview.MoneyTextView
                 android:id="@+id/txtTotalValue"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -64,7 +64,9 @@
                 android:text="0.0"
                 android:textAlignment="center"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:symbol="₱" />
+                />
         </LinearLayout>
 
         <Button

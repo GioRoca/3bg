@@ -23,7 +23,7 @@ public class CartRepository {
         cartDatabase = Room.databaseBuilder(context, CartDatabase.class, DB_NAME).allowMainThreadQueries().build();
     }
 
-    public void insertCartItem(String model, String key, String uid, String imageUrl, float price, int quantity) {
+    public void insertCartItem(String model, String key, String uid, String imageUrl, float price, int quantity, float subTotal) {
         CartItem cartItem = new CartItem();
         cartItem.setModel(model);
         cartItem.setKey(key);
@@ -31,6 +31,7 @@ public class CartRepository {
         cartItem.setImageUrl(imageUrl);
         cartItem.setPrice(price);
         cartItem.setQuantity(quantity);
+        cartItem.setSubtotal(subTotal);
         insertCartItem(cartItem);
     }
 

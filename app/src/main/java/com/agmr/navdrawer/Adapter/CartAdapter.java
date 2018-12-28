@@ -1,12 +1,11 @@
 package com.agmr.navdrawer.Adapter;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +19,19 @@ import android.widget.Toast;
 import com.agmr.navdrawer.Model.CartItem;
 import com.agmr.navdrawer.R;
 import com.agmr.navdrawer.Repository.CartRepository;
-import com.agmr.navdrawer.ViewDisabler;
-import com.agmr.navdrawer.Views.CartView;
 import com.squareup.picasso.Picasso;
 
+import org.fabiomsr.moneytextview.MoneyTextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private Context mContext;
     private List<CartItem> CartList;
+    private double grandTotal;
     private AdapterView.OnItemClickListener mListener;
-
 
     public CartAdapter(Context mContext, List<CartItem> cartItemList) {
         this.mContext = mContext;
@@ -49,10 +50,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(final CartAdapter.CartViewHolder holder, final int position) {
 
         final CartItem currentItem = CartList.get(position);
+
         // holder.brand.setText(currentItem.getBrand);
         holder.model.setText(currentItem.getModel());
         holder.quantity.setText(Integer.toString(currentItem.getQuantity()));
-        holder.price.setText(Float.toString(currentItem.getPrice()));
+        holder.price.setText(Double.toString(currentItem.getPrice()));
         Picasso.get()
                 .load(currentItem.getImageUrl())
                 .placeholder(R.drawable.ic_launcher_background)
@@ -61,6 +63,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 .into(holder.prod_img);
 
         //Increase Quantity
+
+
+
+
+
+
         holder.itemView.findViewById(R.id.inc).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,8 +80,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     int increasedQty = currentQty + 1;
                     currentItem.setQuantity(increasedQty);
                     holder.quantity.setText(Integer.toString(currentItem.getQuantity()));
+                    currentItem.setSubtotal(currentItem.getPrice() * increasedQty);
                     cR.updateCartItem(currentItem);
                     notifyDataSetChanged();
+                    Toast.makeText(mContext, "Subtotal:" + currentItem.getSubtotal(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(mContext, "You have reached maximum quantity per item.", Toast.LENGTH_SHORT).show();
                 }
@@ -91,8 +101,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     int decreasedQty = currentQty - 1;
                     currentItem.setQuantity(decreasedQty);
                     holder.quantity.setText(Integer.toString(currentItem.getQuantity()));
+                    currentItem.setSubtotal(currentItem.getPrice() * decreasedQty);
                     cR.updateCartItem(currentItem);
                     notifyDataSetChanged();
+                    Toast.makeText(mContext, "Subtotal:" + currentItem.getSubtotal(), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -104,13 +116,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle("Are you sure");
+                builder.setTitle("Are you sure?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
                         deleteItem(currentItem, holder.getAdapterPosition());
-
                     }
 
                 });
@@ -126,6 +136,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             }
 
         });
+        grandTotal = computeGrandTotal(CartList);
+        holder.gTotal.setAmount(Float.parseFloat(String.valueOf(grandTotal)));
+        Toast.makeText(mContext, "Grand Total:" + grandTotal, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -134,7 +148,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
     public class CartViewHolder extends RecyclerView.ViewHolder {
-        public TextView model, brand, price, gTotal;
+        public MoneyTextView gTotal;
+        public TextView model, brand, price;
         public ImageView increase, decrease, remove, prod_img;
         public EditText quantity;
 
@@ -143,6 +158,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             model = (TextView) itemView.findViewById(R.id.prodModel);
             brand = (TextView) itemView.findViewById(R.id.prodBrand);
             price = (TextView) itemView.findViewById(R.id.prodPrice);
+            gTotal = (MoneyTextView) ((Activity)mContext).findViewById(R.id.txtTotalValue);
             increase = (ImageView) itemView.findViewById(R.id.inc);
             decrease = (ImageView) itemView.findViewById(R.id.dec);
             quantity = (EditText) itemView.findViewById(R.id.prodQty);
@@ -176,4 +192,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         DeleteItem itm = new DeleteItem();
         itm.execute();
     }
+
+    //work section here...
+    public double computeGrandTotal(List<CartItem> cartItems) {
+
+
+       double gTotal= 0.00;
+        for (CartItem currentItem : cartItems) {
+              gTotal = gTotal+currentItem.getSubtotal();
+             //  Toast.makeText(mContext,currentItem.getId()+": "+gTotal,Toast.LENGTH_SHORT).show();
+
+        }
+        Toast.makeText(mContext,"Grand:"+gTotal,Toast.LENGTH_SHORT).show();
+  return  gTotal;
+    }
+
+
 }
